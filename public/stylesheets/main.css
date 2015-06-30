@@ -1,0 +1,79 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+button, a, li {
+    outline: none !important;
+}
+
+.main-wrapper {
+    height: 100%;
+    padding-top: 80px;
+    min-width: 1200px;
+}
+
+.catergory-wrapper {
+    height: 100%;
+    float: left;
+    width: 300px;
+
+}
+
+.task-wrapper {
+    height: 100%;
+    float: left;
+    width: 300px;
+}
+
+.detail-wrapper {
+    padding-left: 600px;
+}
+
+.container-padding {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.task-title {
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 34px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.list-group-item.bg-primary {
+    color: #fff;
+    background-color: #337ab7;
+}
+
+.vertical-margin-bottom {
+    margin-bottom: 15px;
+}
+
+.vertical-margin-top {
+    margin-top: 15px;
+}
+
+.horizontal-margin-right {
+    margin-right: 10px;
+}
+
+.horizontal-padding-left {
+    padding-left: 30px;
+}
+
+.remove-top-radius .list-group .list-group-item {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
