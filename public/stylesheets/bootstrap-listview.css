@@ -1,0 +1,181 @@
+.listview .list-wrapper {
+    /* box model */
+    float: left;
+    width: 100%;
+    min-width: 600px;
+    height: 100%;
+    min-height: 400px;
+    margin: 0 auto;
+}
+
+.listview .list-wrapper-scroll {
+    /* box-model */
+    width: 100%;
+    height: 100%;
+    padding-right: 10px;
+
+    /* visual */
+    overflow-y: scroll;
+}
+
+.listview .add-list-item {
+    /* box model */
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    margin: 15px 0;
+
+    margin-top: 0;
+
+    /* typography */
+    font-size: 14px;
+    line-height: 1.42857143;
+
+    /* visual */
+    color: #ffffff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    background-color: rgba(0,0,0, 0.4);
+    background-image: none;
+
+}
+
+.listview .item-group {
+    /* box modele */
+    display: block;
+    width: 100%;
+    height: 34px;
+    margin: 2px 0;
+
+    /* typography */
+    font-size: 14px;
+    line-height: 1.42857143;
+
+    /* visual */
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.listview .item-text {
+    /* box model */
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    margin-left: -36px;
+    padding-left: 36px;
+    margin-right: -36px;
+    padding-right: 36px;
+    padding-top: 6px;
+
+    overflow: hidden;        /*内容被剪裁，其余内容不可见*/
+    text-overflow: ellipsis; /* 显示省略符号来代表被修剪的文本*/
+    white-space: nowrap;
+}
+
+.listview .list-item-finished {
+    background-color: #ccc;
+    opacity: 0.7;
+}
+
+.listview .list-item-finished .item-text {
+    text-decoration:line-through;
+}
+
+.listview .detail-wrapper {
+    /* position */
+    position: relative;
+
+    /* box model */
+    float: left;
+    width: 300px;
+    height: 100%;
+    margin-left: -300px;
+    margin-top: -2px;
+    min-height: 400px;
+}
+
+.listview .item-group input, .listview .list-item-star {
+    /* position */
+    position: relative;
+    z-index: 1000;
+
+    /* box model */
+    margin: 10px 12px 0 12px;
+
+    /* typography */
+    text-align: center;
+}
+
+.listview .list-item-star {
+    margin-top: -2px;
+    margin-left: 0;
+    border-width: 10px 4px 5px 4px;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.listview .list-item-stared {
+    color: #ffff00;
+    background-color: #ED0304;
+    border-color: #ED0304;
+}
+
+.listview .list-wrapper button.btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.listview .detail-footer {
+    /* position */
+    position: absolute;
+    bottom: 0;
+
+    /* box modele */
+    display: block;
+    width: 100%;
+    height: 34px;
+    margin: 2px 0;
+
+    /* typography */
+    font-size: 14px;
+    line-height: 1.42857143;
+
+    /* visual */
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.listview .detail-footer span {
+    /* box model */
+    padding-top: 8px;
+    width: 36px;
+    height: 32px;
+
+    /* typo */
+    text-align: center;
+
+    /* visual */
+    cursor: pointer;
+
+}
+
+.listview .item-text.detail-footer-text {
+    padding-top: 6px;
+    margin-left: -36px;
+    padding-left: 36px;
+    margin-right: -36px;
+    padding-right: 36px;
+}
+
+.listview .detail-footer-text {
+    /* typography */
+    text-align: center;
+}

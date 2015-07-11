@@ -9,6 +9,9 @@
 
     <!-- Bootstrap -->
     <link href="stylesheets/bootstrap.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap-treeview.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap-listview.css" rel="stylesheet">
     <link href="stylesheets/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -20,7 +23,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-fixed-top navbar-default">
+<nav class="navbar navbar-fixed-top navbar-default form-control">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">GTD Tools</a>
@@ -30,153 +33,33 @@
 
 <div class="main-wrapper">
     <div class="catergory-wrapper">
-        <div class="container-fluid">
+        <div class="container-fluid" style="height: 100%;">
             <div class="list-group">
                 <a class="list-group-item" style="cursor:pointer;"><span class="badge">10</span>所有任务</a>
             </div>
 
-            <div class="list-group">
-                <div class="list-group-item">分类列表</div>
-                <div id="category-list" class="treeview remove-top-radius" style="overflow-y: scroll"></div>
-            </div>
+            <div class="tree-wrapper list-group">
+                <div class="list-group-item category-head" style="cursor: pointer;">分类列表</div>
+                <div class="tree-scroll">
+                    <div id="category-list" class="remove-top-radius"></div>
+                </div>
 
-            <div style="position: fixed; bottom: 0; width: 270px;">
-                <div id="add-category" class="list-group-item text-primary horizontal-padding-left" data-toggle="modal"
-                     data-target="#add-category-dialog">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span>新增分类</span>
+                <div style="position: absolute; bottom: 0; width: 270px; margin-bottom: 1px">
+                    <div id="add-category" class="list-group-item text-primary horizontal-padding-left"
+                         data-toggle="modal"
+                         data-target="#add-category-dialog">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <span>创建分类</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="task-wrapper">
-        <div class="container-fluid">
-            <div class="text-center">
-                <div id="task-filter" class="btn-group vertical-margin-bottom" role="group">
-                    <button type="button" class="btn btn-default">所有</button>
-                    <button type="button" class="btn btn-default" data-type="0">未完成</button>
-                    <button type="button" class="btn btn-default" data-type="1">已完成</button>
-                </div>
-            </div>
+    <div id="task-list" class="task-wrapper">
 
-            <div id="task-list" style="overflow-y: scroll;">
-                <!--
-                <ul class="list-group">
-                    <li href="#" class="list-group-item bg-primary">2014-01-01</li>
-                    <a href="#" class="list-group-item">todo1</a>
-                    <a href="#" class="list-group-item">todo2</a>
-                </ul>
-                -->
-            </div>
-
-            <div style="position: fixed; bottom: 0; width: 270px;">
-                <div id="add-task" class="list-group-item text-primary horizontal-padding-left" data-toggle="modal"
-                     data-target="#add-task-dialog">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span>新增任务</span>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- 每一行设置min-height -->
-    <div class="detail-wrapper">
-        <div class="container-padding">
-            <span id="r-task-name" class="task-title">&nbsp;</span>
-            <button id="finish-task" type="button" class="btn btn-default pull-right horizontal-margin-right">
-                <span class="glyphicon glyphicon-ok-circle"></span>
-            </button>
-            <button type="button" class="btn btn-default pull-right horizontal-margin-right" data-toggle="modal"
-                    data-target="#modify-task-dialog">
-                <span class="glyphicon glyphicon-edit"></span>
-            </button>
-            <hr>
-        </div>
-
-        <div class="container-padding">
-            <h5 id="r-task-date">&nbsp;</h5>
-            <hr>
-        </div>
-
-        <div class="container-padding">
-            <p id="r-task-detail">&nbsp;</p>
-        </div>
-    </div>
-
-    <div class="modal fade" id="add-task-dialog" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">新建任务</h4>
-                </div>
-
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="control-label" for="task-name">任务名称：</label>
-                            <input type="text" class="form-control" id="add-task-name">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" for="task-date">任务日期：</label>
-                            <input type="text" class="form-control" id="add-task-date">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" for="task-detail">任务内容：</label>
-                            <textarea class="form-control" id="add-task-detail"></textarea>
-                        </div>
-                    </form>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save-added-task">Add</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modify-task-dialog" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">编辑任务</h4>
-                </div>
-
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="control-label" for="task-name">任务名称：</label>
-                            <input type="text" class="form-control" id="modify-task-name">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" for="task-date">任务日期：</label>
-                            <input type="text" class="form-control" id="modify-task-date">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" for="task-detail">任务内容：</label>
-                            <textarea class="form-control" id="modify-task-detail"></textarea>
-                        </div>
-                    </form>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save-modified-task">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade" id="add-category-dialog" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
@@ -184,7 +67,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">新建分类</h4>
+                    <h4 class="modal-title">创建分类</h4>
                 </div>
 
                 <div class="modal-body">
@@ -205,13 +88,306 @@
     </div>
 </div>
 
+<div id="fail-alert" class="alert alert-danger" role="alert"
+     style="position: fixed; top: 0; z-index: 2000; width: 100%; text-align: center; display: none;">
+    连接服务器失败，请稍后重试
+</div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="javascripts/jquery-1.11.2.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="javascripts/bootstrap.min.js"></script>
 <script src="javascripts/bootstrap-treeview.js"></script>
 <script src="javascripts/moment.js"></script>
+<script src="javascripts/bootstrap-datetimepicker.min.js"></script>
+<script src="javascripts/bootstrap-listview.js"></script>
 <script src="javascripts/main.js"></script>
+
 </body>
 </html>
+
+<!--
+list-item-stared
+
+把有用的class 放到一个 数组中， 然后检测如果点击的不再其中，则清除状态之类操作
+
+<div class="list-wrapper">
+    <div class="list-wrapper-scroll">
+        <input class="add-list-item" type="text" value="" placeholder="添加新任务">
+        <div class="todo-list-wrapper"></div>
+        <button type="button" class="btn btn-primary btn-sm toggle-finished-list">显示已完成任务</button>
+        <div class="finished-list-wrapper"></div>
+    </div>
+</div>
+
+<div class="detail-wrapper">
+    <div class="item-group detail-item">
+        <input type="checkbox" class="pull-left" value="">
+        <span class="item-text detail-item-text"></span>
+        <span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker">
+                    <input type="text" class="form-control" placeholder="请选择到期日"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    $("#datetimepicker").datetimepicker();
+                });
+            </script>
+        </div>
+    </div>
+    <textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea>
+
+    <div class="detail-footer">
+        <span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span>
+        <span class="item-text detail-footer-text"></span>
+        <span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span>
+    </div>
+</div>
+
+<div class="item-group list-item">
+    <input type="checkbox" class="pull-left" value="">
+    <span class="item-text list-item-text"></span>
+    <span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span>
+</div>
+-->
+
+<!--
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>list test</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap-datetimepicker/4.14.30/css/bootstrap-datetimepicker.min.css" media="screen" title="no title" charset="utf-8">
+
+    <style media="screen">
+        .list-wrapper {
+            /* box model */
+            float: left;
+            width: 100%;
+            min-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+            padding-right: 320px;
+        }
+
+        .add-list-item {
+            /* box model */
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            margin: 15px 0;
+
+            /* typography */
+            font-size: 14px;
+            line-height: 1.42857143;
+
+            /* visual */
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background-color: #ccc;
+            background-image: none;
+
+            /* misc */
+            opacity: 0.6;
+        }
+
+        .list-item {
+            /* box modele */
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            margin: 2px 0;
+
+            /* typography */
+            font-size: 14px;
+            line-height: 1.42857143;
+
+            /* visual */
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .list-item-text {
+            /* box model */
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            margin-left: -15px;
+            padding-left: 25px;
+            margin-right: -14px;
+            padding-right: 16px;
+
+            overflow: hidden;        /*内容被剪裁，其余内容不可见*/
+            text-overflow: ellipsis; /* 显示省略符号来代表被修剪的文本*/
+            white-space: nowrap;
+        }
+
+        .list-item-finish {
+            background-color: #ccc;
+            opacity: 0.7;
+        }
+
+        .list-item-finish .list-item-text {
+            text-decoration:line-through;
+        }
+
+        .detail-wrapper {
+            /* position */
+            position: relative;
+
+            /* box model */
+            float: left;
+            width: 300px;
+            height: 100%;
+            margin-left: -300px;
+            margin-top: 15px;
+        }
+
+        .list-item input, .list-item .list-item-star {
+            position: relative;
+            z-index: 1000;
+        }
+
+        .list-wrapper button.btn {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .detail-footer {
+            /* position */
+            position: absolute;
+            bottom: 0;
+
+            /* box model */
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 80%;">
+    <div class="list-wrapper">
+        <input class="add-list-item" type="text" name="name" value="" placeholder="添加新任务">
+
+        <div class="todo-item-wrapper">
+            <div class="list-item">
+                <input type="checkbox" class="pull-left" value="">
+                <span class="list-item-text">这是文字</span>
+                <span class="list-item-star glyphicon glyphicon-star pull-right"></span>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-sm toggle-finished-btn">显示已完成任务</button>
+
+        <div class="finish-item-wrapper">
+            <div class="list-item list-item-finish">
+                <input type="checkbox" class="pull-left" value="">
+                <span class="list-item-text">这是文字</span>
+                <span class="list-item-star glyphicon glyphicon-star pull-right"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-wrapper">
+        <div class="list-item">
+            <input type="checkbox" class="pull-left" value="">
+            <span class="list-item-text">详细</span>
+            <span class="list-item-star glyphicon glyphicon-star pull-right"></span>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepicker'>
+                        <input type='text' class="form-control" placeholder="请选择到期日"/>
+                          <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea>
+
+        <div class="detail-footer">
+            <li class="list-item-">
+                <span class="pull-left glyphicon glyphicon-expand"></span>
+                <p class="list-item-text" style="text-align: center;">创建于2015-07-01</p>
+                <span class="pull-right glyphicon glyphicon-trash"></span>
+            </li>
+        </div>
+    </div>
+</div>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.js" charset="utf-8"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.js" charset="utf-8"></script>
+<script src="http://cdn.bootcss.com/moment.js/2.10.3/moment.min.js" charset="utf-8"></script>
+<script src="http://cdn.bootcss.com/bootstrap-datetimepicker/4.14.30/js/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+</body>
+</html>
+-->
+
+
+<!--
+<div class="list-wrapper">
+    <div class="list-wrapper-scroll">
+        <input class="add-list-item" type="text" name="name" value="" placeholder="添加新任务">
+        <div class="todo-list-wrapper"></div>
+        <button type="button" class="btn btn-primary btn-sm toggle-finished-list">显示已完成任务</button>
+        <div class="finished-list-wrapper"></div>
+    </div>
+</div>
+
+<div class="detail-wrapper">
+    <div class="item-group detail-item">
+        <input type="checkbox" class="pull-left" value="">
+        <span class="item-text detail-item-text"></span>
+        <span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker">
+                    <input type="text" class="form-control" placeholder="请选择到期日"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    $("#datetimepicker").datetimepicker();
+                });
+            </script>
+        </div>
+    </div>
+
+    <textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea>
+
+    <div class="detail-footer">
+        <span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span>
+        <div class="item-text detail-footer-text">test</div>
+        <span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span>
+    </div>
+</div>
+
+<div class="item-group list-item">
+    <input type="checkbox" class="pull-left" value="">
+    <span class="item-text list-item-text"></span>
+    <span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span>
+</div>
+-->
+
 

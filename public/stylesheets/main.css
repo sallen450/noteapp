@@ -1,6 +1,8 @@
 html, body {
     height: 100%;
     width: 100%;
+
+    min-height: 400px;
 }
 
 button, a, li {
@@ -17,55 +19,18 @@ button, a, li {
     height: 100%;
     float: left;
     width: 300px;
-
 }
 
 .task-wrapper {
     height: 100%;
-    float: left;
-    width: 300px;
-}
-
-.detail-wrapper {
-    padding-left: 600px;
-}
-
-.container-padding {
-    padding-right: 15px;
-    padding-left: 15px;
-}
-
-hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.task-title {
-    display: inline-block;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-weight: normal;
-    line-height: 34px;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
+    width: 100%;
+    padding-left: 310px;
+    padding-right: 10px;
 }
 
 .list-group-item.bg-primary {
     color: #fff;
     background-color: #337ab7;
-}
-
-.vertical-margin-bottom {
-    margin-bottom: 15px;
-}
-
-.vertical-margin-top {
-    margin-top: 15px;
-}
-
-.horizontal-margin-right {
-    margin-right: 10px;
 }
 
 .horizontal-padding-left {
@@ -76,4 +41,5 @@ hr {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
 
