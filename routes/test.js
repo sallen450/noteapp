@@ -32,7 +32,7 @@ var Category = mongoose.model('Category', cschema);
 var Task = mongoose.model('Task', tschema);
 
 
-Category.findById(new mongoose.Types.ObjectId("559e1099572fb22d53b3c3d5"), function (err, result) {
+Category.findById("559e1099572fb22d53b3c3d5", function (err, result) {
     if (err) {
         next(err);
     }
@@ -43,20 +43,4 @@ Category.findById(new mongoose.Types.ObjectId("559e1099572fb22d53b3c3d5"), funct
             next(err);
         }
     });
-});
-
-Category.findById(new mongoose.Types.ObjectId(req.body.parentCategoryId), function (err, result) {
-    if (err) {
-        next(err);
-    }
-
-    console.log(req.body.parentCategoryId);
-    result.subCategoryIds.push(_result._id);
-    result.save(function (err) {
-        if (err) {
-            next(err);
-        }
-    });
-
-    res.json(_result);
 });

@@ -202,6 +202,14 @@ $(function () {
         });
     }
 
+    function taskDeadlineHandler(itemData) {
+        $.post("/api/taskdeadline", {id: itemData._id, deadlineDate: itemData.deadlineDate}, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+            }
+
+        })
+    }
 
 
     /**
@@ -222,6 +230,7 @@ $(function () {
                 onDeleteItem: taskDeleteHandler,
                 onStar: taskStarHandler,
                 onFinish: taskFinishHandler,
+                onDeadLineChange: taskDeadlineHandler,
                 data: generateListData(data)
             });
         })

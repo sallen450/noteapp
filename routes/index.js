@@ -11,6 +11,7 @@ router.post('/api/addcategory', dbHandle.addCategory);
 router.post('/api/deletetask', dbHandle.deleteTaskById);
 router.post('/api/finishtask', dbHandle.finishTask);
 router.post('/api/startask', dbHandle.starTask);
+router.post('/api/taskdeadline', dbHandle.changeTaskDeadline);
 
 
 router.get('/', function (req, res, next) {

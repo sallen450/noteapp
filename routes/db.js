@@ -56,7 +56,6 @@ function generateTaskDocument(taskName, categoryId, createdDate, deadlineDate) {
     }
 }
 
-
 var cschema = new mongoose.Schema(categorySchema, { strict: false });
 var tschema = new mongoose.Schema(taskSchema);
 
@@ -111,7 +110,7 @@ function addCategory(req, res, next) {
 
         var _result = result;
         if (req.body.parentCategoryId) {
-            Category.findById(new mongoose.Types.ObjectId(req.body.parentCategoryId), function (err, result) {
+            Category.findById(req.body.parentCategoryId, function (err, result) {
                 if (err) {
                     next(err);
                 }
@@ -143,8 +142,7 @@ function deleteCategory(req, res, next) {
 
     // 不是root分类，需要从父节点的subIds删除自己
     if (req.body.parentCategoryId) {
-        var parentCategoryId = new mongoose.Types.ObjectId(req.body.parentCategoryId);
-        Category.findById({"_id": parentCategoryId}, function (err, result) {
+        Category.findById(req.body.parentCategoryId, function (err, result) {
             if (err) {
                 next(err);
             }
@@ -189,7 +187,7 @@ function addTask(req, res, next) {
         }
 
         var _result = result;
-        Category.findById({"_id": task.categoryId}, function (err, result) {
+        Category.findById(task.categoryId, function (err, result) {
             if (err) {
                 next(err);
             }
@@ -243,7 +241,7 @@ function finishTask(req, res, next) {
         }
     });
 
-    Category.findById({"_id": req.body.categoryId}, function (err, result) {
+    Category.findById(req.body.categoryId, function (err, result) {
         if (err) {
             next(err);
         }
@@ -312,6 +310,20 @@ function deleteTaskById(req, res, next) {
     });
 }
 
+function changeTaskDeadline(req, res, next) {
+    var deadline = req.body.deadlineDate ? new Date(req.body.deadlineDate) : null;
+    Task.update({"_id": req.body.id}, {deadlineDate: deadline}, function (err) {
+        if (err) {
+            next(err);
+        }
+
+        res.json({err: false});
+    })
+}
+
+
+
+
 /**
  * Description: 错误处理
  * @param err
@@ -335,6 +347,6 @@ exports.addTask = addTask;
 exports.modifyTask = modifyTask;
 exports.finishTask = finishTask;
 exports.starTask = starTask;
-//todo modifydeadline
+exports.changeTaskDeadline = changeTaskDeadline;
 
 exports.errorHandle = errorHandle;

@@ -2,7 +2,6 @@
  * Created by jiqinghua on 15/7/5.
  */
 
-//todo selected 的取消情形需要考虑
 ;
 (function ($, window, document, undefined) {
     var pluginName = "listview";
@@ -22,12 +21,15 @@
         // onFinish(itemData)       return: true or false
         onFinish: undefined,
 
+        // onDeadlineChange(itemData)
+        onDeadLineChange: undefined,
+
         data: []
     };
 
     _default.template = {
         list: '<div class="list-wrapper"><div class="list-wrapper-scroll"><input class="add-list-item" type="text" name="name" value="" placeholder="添加新任务"><div class="todo-list-wrapper"></div><button type="button" class="btn btn-primary btn-sm toggle-finished-list">显示已完成任务</button><div class="finished-list-wrapper"></div></div></div>',
-        aside: '<div class="detail-wrapper"><div class="item-group detail-item"><input type="checkbox" class="pull-left" value=""><span class="item-text detail-item-text"></span><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div><div class="container-fluid"><div class="row"><div class="form-group"><div class="input-group date" id="datetimepicker"><input type="text" class="form-control" placeholder="请选择到期日"/><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><script type="text/javascript">$(function () {$("#datetimepicker").datetimepicker();}); </script></div></div><textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea><div class="detail-footer"><span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span><div class="item-text detail-footer-text"></div><span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span></div></div>',
+        aside: '<div class="detail-wrapper"><div class="item-group detail-item"><input type="checkbox" class="pull-left" value=""><span class="item-text detail-item-text"></span><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div><div class="container-fluid"><div class="row"><div class="form-group"><div class="input-group date" id="datetimepicker"><input type="text" class="form-control" placeholder="请选择到期日"/><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><script type="text/javascript">$(function () {$("#datetimepicker").datetimepicker({format: "YYYY-MM-DD HH:mm:ss"});}); </script></div></div><textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea><div class="detail-footer"><span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span><div class="item-text detail-footer-text"></div><span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span></div></div>',
         item: '<div class="item-group list-item"><input type="checkbox" class="pull-left" value=""><span class="item-text list-item-text"></span><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div>'
     };
 
@@ -129,6 +131,7 @@
     List.prototype.buildList = function () {
         this.$list = $(_default.template.list);
         this.$aside = $(_default.template.aside).hide();
+        this.$aside.find("#datetimepicker").find("input").blur($.proxy(this.blurHandler, this));
         this.$element.append(this.$list).append(this.$aside);
         this.$todoWrapper = this.$list.find(".todo-list-wrapper");
         this.$finishWrapper = this.$list.find(".finished-list-wrapper").toggle(this.state.showFinished);
@@ -163,6 +166,9 @@
             }
 
             this.$aside.find(".detail-footer-text").text("创建于 "+ moment(new Date(this.state.selectedItemData.createdDate)).format("YYYY/MM/DD"));
+            if (Date.parse(this.state.selectedItemData.deadlineDate)) {
+                this.$aside.find("#datetimepicker").find("input").val(moment(this.state.selectedItemData.deadlineDate).format("YYYY-MM-DD HH:mm:ss"));
+            }
 
             if (this.state.selectedItemData.isStar) {
                 this.$aside.find(".list-item-star").addClass("list-item-stared");
@@ -285,6 +291,22 @@
                 return this.items[i];
             }
         }
+    };
+
+    /**
+     * Description: 处理aside日期改变
+     * @param event
+     */
+    List.prototype.blurHandler = function (event) {
+        var deadline = moment($("#datetimepicker").find("input").val()).format();
+        if (deadline == "Invalid date") {
+            this.state.selectedItemData.deadlineDate = null;
+        }
+        else {
+            this.state.selectedItemData.deadlineDate = deadline;
+        }
+
+        this.options.onDeadLineChange($.extend(true, {}, this.state.selectedItemData));
     };
 
     /**
