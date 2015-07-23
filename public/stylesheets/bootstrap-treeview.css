@@ -67,8 +67,8 @@
 
 .tree-wrapper.list-group {
 	margin-bottom: 0;
-	margin-top: -62px;
-	padding-top: 62px;
+	/*margin-top: -62px;*/
+	/*padding-top: 62px;*/
 	height: 100%;
 }
 

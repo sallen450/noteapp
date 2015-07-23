@@ -3,6 +3,10 @@
  */
 
 $(function () {
+
+    var $categoryList = $('#category-list');
+    var $taskList = $('#task-list');
+
     /**
      * Description: jQuery custom toggleClick
      *
@@ -19,23 +23,14 @@ $(function () {
         })
     };
 
-    var $categoryList = $('#category-list');
-    var $taskList = $('#task-list');
-
-    $.getJSON('/api/initTreeView', function (data) {
-        $categoryList.treeview({
-            color: "#428bca",
-            expandIcon: 'glyphicon glyphicon-triangle-bottom',
-            collapseIcon: 'glyphicon glyphicon-triangle-right',
-            nodeIcon: "glyphicon glyphicon-folder-close",
-            showTags: true,
-            data: generateTreeData(data),
-
-            onNodeSelected: categoryItemSelectHandler,
-            onNodeDelete: categoryItemDeleteHandler
-        });
-
-    });
+    /**
+     * Description: show error information
+     * @param msg
+     */
+    function showFailMessage(msg) {
+        msg = msg || "连接服务器失败！";
+        $("#fail-alert").text(msg).slideDown("fast").delay(2000).slideUp("fast");
+    }
 
     /**
      * Description： 根据父节点ID获取TreeViewData父节点数据对象
@@ -97,7 +92,24 @@ $(function () {
         return treeViewDefaultData;
     }
 
+    /**
+     * Description: get data from server and render category treeview
+     */
+    function renderCategoryTreeView() {
+        $.getJSON('/api/initTreeView', function (data) {
+            $categoryList.treeview({
+                color: "#428bca",
+                expandIcon: 'glyphicon glyphicon-triangle-bottom',
+                collapseIcon: 'glyphicon glyphicon-triangle-right',
+                nodeIcon: "glyphicon glyphicon-folder-close",
+                showTags: true,
+                data: generateTreeData(data),
 
+                onNodeSelected: categoryItemSelectHandler,
+                onNodeDelete: categoryItemDeleteHandler
+            });
+        });
+    }
 
     /**
      * Descriptions: 生成list的data
@@ -131,22 +143,14 @@ $(function () {
                 return;
             }
 
-            $.getJSON('/api/initTreeView', function (data) {
-                $categoryList.treeview({
-                    color: "#428bca",
-                    expandIcon: 'glyphicon glyphicon-triangle-bottom',
-                    collapseIcon: 'glyphicon glyphicon-triangle-right',
-                    nodeIcon: "glyphicon glyphicon-folder-close",
-                    showTags: true,
-                    data: generateTreeData(data),
-
-                    onNodeSelected: categoryItemSelectHandler,
-                    onNodeDelete: categoryItemDeleteHandler
-                });
-            });
+            renderCategoryTreeView();
         });
     }
 
+    /**
+     * Description: add new task data to server
+     * @param {Object} itemData
+     */
     function taskAddHandler(itemData) {
         itemData.taskName = itemData.text;
         itemData.categoryId = $categoryList.treeview("getSelectedNodeData").id;
@@ -163,6 +167,10 @@ $(function () {
         })
     }
 
+    /**
+     * Description: delete task from server
+     * @param {Object} itemData
+     */
     function taskDeleteHandler(itemData) {
         $.post("/api/deletetask", {taskId: itemData._id, categoryId: itemData.categoryId, isFinish: itemData.isFinish}, function (rData) {
             if (rData.err) {
@@ -171,6 +179,10 @@ $(function () {
         })
     }
 
+    /**
+     * Description: star a task from server
+     * @param {Object} itemData
+     */
     function taskStarHandler(itemData) {
         $.post("/api/startask", {id: itemData._id, isStar: itemData.isStar}, function (rData) {
             if (rData.err) {
@@ -179,6 +191,10 @@ $(function () {
         });
     }
 
+    /**
+     * Description: finish a task from server
+     * @param {Object} itemData
+     */
     function taskFinishHandler(itemData) {
         $.post("/api/finishtask", {id: itemData._id, isFinish: itemData.isFinish, categoryId: itemData.categoryId}, function (rData) {
             if (rData.err) {
@@ -186,22 +202,15 @@ $(function () {
             }
 
 
-            $.getJSON('/api/initTreeView', function (data) {
-                $categoryList.treeview({
-                    color: "#428bca",
-                    expandIcon: 'glyphicon glyphicon-triangle-bottom',
-                    collapseIcon: 'glyphicon glyphicon-triangle-right',
-                    nodeIcon: "glyphicon glyphicon-folder-close",
-                    showTags: true,
-                    data: generateTreeData(data),
+            renderCategoryTreeView();
 
-                    onNodeSelected: categoryItemSelectHandler,
-                    onNodeDelete: categoryItemDeleteHandler
-                });
-            });
         });
     }
 
+    /**
+     * Description: set a task deadline to server
+     * @param {Object} itemData
+     */
     function taskDeadlineHandler(itemData) {
         $.post("/api/taskdeadline", {id: itemData._id, deadlineDate: itemData.deadlineDate}, function (rData) {
             if (rData.err) {
@@ -210,7 +219,6 @@ $(function () {
 
         })
     }
-
 
     /**
      * Description: click category item event handler, to create and display task list
@@ -236,10 +244,12 @@ $(function () {
         })
     }
 
+
+    renderCategoryTreeView();
     $(".category-head").on('click', function (event) {
         $categoryList.treeview("clearSelect");
+        $taskList.listview("destroy");
     });
-
 
     /**
      * Description: add category event handle
@@ -268,25 +278,11 @@ $(function () {
                 return;
             }
 
-            $.getJSON('/api/initTreeView', function (data) {
-                $categoryList.html("");
-                $categoryList.treeview({
-                    color: "#428bca",
-                    expandIcon: 'glyphicon glyphicon-triangle-bottom',
-                    collapseIcon: 'glyphicon glyphicon-triangle-right',
-                    nodeIcon: "glyphicon glyphicon-folder-close",
-                    showTags: true,
-                    data: generateTreeData(data),
-
-                    onNodeSelected: categoryItemSelectHandler,
-                    onNodeDelete: categoryItemDeleteHandler
-                });
-            });
+            renderCategoryTreeView();
 
             $('#add-category-dialog').modal('hide');
         })
     });
-
 
     /**
      * Description: clear modal dialog input's value before shown
@@ -295,12 +291,6 @@ $(function () {
     $('#add-category-dialog').on('show.bs.modal', function (event) {
         $('#add-category-name').val("");
     });
-
-
-    function showFailMessage(msg) {
-        msg = msg || "连接服务器失败！";
-        $("#fail-alert").text(msg).slideDown("fast").delay(2000).slideUp("fast");
-    }
 
 });
 

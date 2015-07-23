@@ -410,7 +410,6 @@
         return result || this;
     };
 
-})
-(jQuery, window, document);
+})(jQuery, window, document);
 
 

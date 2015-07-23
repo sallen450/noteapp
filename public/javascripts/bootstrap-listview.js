@@ -46,7 +46,9 @@
 
         this.init(options);
 
-        return {};
+        return {
+            destroy: $.proxy(this.destroy, this)
+        };
     };
 
     /**
@@ -352,15 +354,33 @@
         }
     };
 
-    $.fn[pluginName] = function (options) {
+    /**
+     * Desctiption:
+     */
+    List.prototype.destroy = function () {
+        this.unsubcribeEvents();
+        this.$element.html("");
+        $.removeData(this.$element[0], "listview");
+    };
+
+    $.fn[pluginName] = function (options, args) {
         var result;
 
         this.each(function () {
             var _this = $.data(this, pluginName);
 
             // if 中放判断条件
-            if (false) {
-                // todo 可以放一些功能函数
+            if (typeof options === "string") {
+                if (_this) {
+                    if (!$.isArray(args)) {
+                        args = [args];
+                    }
+
+                    result = _this[options].apply(_this, args);
+                }
+                else {
+                    console.log("not init.")
+                }
             }
             else {
                 $.data(this, pluginName, new List(this, $.extend(true, {}, options)));
