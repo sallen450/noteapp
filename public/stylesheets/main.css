@@ -7,7 +7,7 @@ html, body {
 
 /* 响应式背景图片 */
 body {
-    background-image: url(http://www.jinbang0752.com/img/aHR0cDovL2RsLmJpemhpLnNvZ291LmNvbS9pbWFnZXMvMjAxMi8wNy8zMS8yMDg0NC5qcGc=.jpg);
+    background-image: url("../images/background.jpg");
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
