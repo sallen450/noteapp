@@ -155,21 +155,21 @@ function deleteCategory(req, res, next) {
                 }
             });
         });
-
-        Category.remove({"_id": {$in: deleteCategoryIds}}, function (err) {
-            if (err) {
-                next(err);
-            }
-
-        });
-
-        Task.remove({"categoryId": {$in: deleteCategoryIds}}, function (err) {
-            if (err) {
-                next(err);
-            }
-            res.json({err: false});
-        });
     }
+
+    Category.remove({"_id": {$in: deleteCategoryIds}}, function (err) {
+        if (err) {
+            next(err);
+        }
+
+    });
+
+    Task.remove({"categoryId": {$in: deleteCategoryIds}}, function (err) {
+        if (err) {
+            next(err);
+        }
+        res.json({err: false});
+    });
 }
 
 /**

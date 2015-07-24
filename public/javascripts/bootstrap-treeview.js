@@ -51,7 +51,8 @@
 
         return {
             getSelectedNodeData: $.proxy(this.getSelectedNodeData, this),
-            clearSelect: $.proxy(this.clearSelect, this)
+            clearSelect: $.proxy(this.clearSelect, this),
+            updateSelectedNodeBadge: $.proxy(this.updateSelectedNodeBadge, this)
         };
     };
 
@@ -265,7 +266,6 @@
         var nodeId = $target.closest('li.list-group-item').attr('data-nodeid');
         var classList = $target.attr('class') ? $target.attr('class').split(" ") : [];
 
-        // todo 点击到.treeview元素的时候，Error: node does not exist
         var node = this.getNode(nodeId);
         if (node) {
             if (classList.indexOf('expand-icon') !== -1) {
@@ -275,8 +275,6 @@
             }
             else if (classList.indexOf("operation-delete") !== -1) {
                 this.deleteNode(nodeId);
-
-                //this.render();
             }
             else if (classList.indexOf('opera-icon') !== -1) {
                 return true;
@@ -312,7 +310,7 @@
 
     /**
      * 获取要删除的id数组
-     * @param parentNode
+     * @param deleteNode
      * @returns {Array}
      */
     function getDeletedIds(deleteNode) {
@@ -368,7 +366,7 @@
     };
 
     /**
-     * Description： 获取选中的节点的数据
+     * Description： 获取选中的节点的数据，返回一个新的对象
      */
     Tree.prototype.getSelectedNodeData = function () {
         for (var i = 0, length = this.nodes.length; i < length; i++) {
@@ -378,6 +376,33 @@
         }
 
         return null;
+    };
+
+    /**
+     * Description: 返回选中的节点数据，可以通过修改数据更新view； 或者返回null
+     * @returns {Object}
+     */
+    Tree.prototype.getSelectedNode = function() {
+        for (var i = 0, length = this.nodes.length; i < length; i++) {
+            if (this.nodes[i].state.selected) {
+                return this.nodes[i];
+            }
+        }
+
+        return null;
+    };
+
+    /**
+     * Description: 更新选中节点的未完成任务数量
+     */
+    Tree.prototype.updateSelectedNodeBadge = function () {
+        var changeCount = arguments[0];
+        var selectedNode = this.getSelectedNode();
+        if (selectedNode) {
+            selectedNode.tags[0] = Number(selectedNode.tags[0]) + changeCount;
+        }
+
+        this.render();
     };
 
     Tree.prototype.clearSelect = function () {
@@ -411,5 +436,4 @@
     };
 
 })(jQuery, window, document);
-
 

@@ -3,7 +3,6 @@
  */
 
 $(function () {
-
     var $categoryList = $('#category-list');
     var $taskList = $('#task-list');
 
@@ -31,6 +30,12 @@ $(function () {
         msg = msg || "连接服务器失败！";
         $("#fail-alert").text(msg).slideDown("fast").delay(2000).slideUp("fast");
     }
+
+    /**
+     *
+     * Tree View Part
+     *
+     */
 
     /**
      * Description： 根据父节点ID获取TreeViewData父节点数据对象
@@ -109,20 +114,8 @@ $(function () {
                 onNodeDelete: categoryItemDeleteHandler
             });
         });
-    }
 
-    /**
-     * Descriptions: 生成list的data
-     *
-     */
-    function generateListData(data) {
-        if ($.isArray(data)) {
-            data.forEach(function (elememt) {
-                elememt.text = elememt.taskName;
-            })
-        }
-
-        return data;
+        $taskList.listview("destroy");
     }
 
     /**
@@ -137,6 +130,7 @@ $(function () {
             ids: deleteIds
         };
 
+
         $.post('/api/deleteCategory', data, function (rData) {
             if (rData.err) {
                 window.location.reload();
@@ -145,79 +139,6 @@ $(function () {
 
             renderCategoryTreeView();
         });
-    }
-
-    /**
-     * Description: add new task data to server
-     * @param {Object} itemData
-     */
-    function taskAddHandler(itemData) {
-        itemData.taskName = itemData.text;
-        itemData.categoryId = $categoryList.treeview("getSelectedNodeData").id;
-
-        $.post("/api/addtask", {
-            taskName: itemData.text,
-            categoryId: itemData.categoryId,
-            createdDate: itemData.createdDate,
-            deadlineDate: itemData.deadlineDate
-        }, function (rData) {
-            if (rData.err) {
-                showFailMessage();
-            }
-        })
-    }
-
-    /**
-     * Description: delete task from server
-     * @param {Object} itemData
-     */
-    function taskDeleteHandler(itemData) {
-        $.post("/api/deletetask", {taskId: itemData._id, categoryId: itemData.categoryId, isFinish: itemData.isFinish}, function (rData) {
-            if (rData.err) {
-                showFailMessage();
-            }
-        })
-    }
-
-    /**
-     * Description: star a task from server
-     * @param {Object} itemData
-     */
-    function taskStarHandler(itemData) {
-        $.post("/api/startask", {id: itemData._id, isStar: itemData.isStar}, function (rData) {
-            if (rData.err) {
-                showFailMessage();
-            }
-        });
-    }
-
-    /**
-     * Description: finish a task from server
-     * @param {Object} itemData
-     */
-    function taskFinishHandler(itemData) {
-        $.post("/api/finishtask", {id: itemData._id, isFinish: itemData.isFinish, categoryId: itemData.categoryId}, function (rData) {
-            if (rData.err) {
-                showFailMessage();
-            }
-
-
-            renderCategoryTreeView();
-
-        });
-    }
-
-    /**
-     * Description: set a task deadline to server
-     * @param {Object} itemData
-     */
-    function taskDeadlineHandler(itemData) {
-        $.post("/api/taskdeadline", {id: itemData._id, deadlineDate: itemData.deadlineDate}, function (rData) {
-            if (rData.err) {
-                showFailMessage();
-            }
-
-        })
     }
 
     /**
@@ -244,6 +165,105 @@ $(function () {
         })
     }
 
+    /**
+     *
+     * List View Part
+     *
+     */
+
+    /**
+     * Descriptions: 生成list的data
+     *
+     */
+    function generateListData(data) {
+        if ($.isArray(data)) {
+            data.forEach(function (elememt) {
+                elememt.text = elememt.taskName;
+            })
+        }
+
+        return data;
+    }
+
+    /**
+     * Description: add new task data to server
+     * @param {Object} itemData
+     */
+    function taskAddHandler(itemData) {
+        itemData.taskName = itemData.text;
+        itemData.categoryId = $categoryList.treeview("getSelectedNodeData").id;
+
+        $.post("/api/addtask", {
+            taskName: itemData.text,
+            categoryId: itemData.categoryId,
+            createdDate: itemData.createdDate,
+            deadlineDate: itemData.deadlineDate
+        }, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+                return;
+            }
+
+            $categoryList.treeview("updateSelectedNodeBadge", 1);
+        })
+    }
+
+    /**
+     * Description: delete task from server
+     * @param {Object} itemData
+     */
+    function taskDeleteHandler(itemData) {
+        $.post("/api/deletetask", {taskId: itemData._id, categoryId: itemData.categoryId, isFinish: itemData.isFinish}, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+                return;
+            }
+
+            var count = itemData.isFinish ? 0 : -1;
+            $categoryList.treeview("updateSelectedNodeBadge", count);
+        })
+    }
+
+    /**
+     * Description: star a task from server
+     * @param {Object} itemData
+     */
+    function taskStarHandler(itemData) {
+        $.post("/api/startask", {id: itemData._id, isStar: itemData.isStar}, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+            }
+        });
+    }
+
+    /**
+     * Description: finish a task from server
+     * @param {Object} itemData
+     */
+    function taskFinishHandler(itemData) {
+        $.post("/api/finishtask", {id: itemData._id, isFinish: itemData.isFinish, categoryId: itemData.categoryId}, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+                return;
+            }
+
+            var count = itemData.isFinish ? -1 : 1;
+            $categoryList.treeview("updateSelectedNodeBadge", count);
+        });
+    }
+
+    /**
+     * Description: set a task deadline to server
+     * @param {Object} itemData
+     */
+    function taskDeadlineHandler(itemData) {
+        $.post("/api/taskdeadline", {id: itemData._id, deadlineDate: itemData.deadlineDate}, function (rData) {
+            if (rData.err) {
+                showFailMessage();
+            }
+
+        })
+    }
 
     renderCategoryTreeView();
     $(".category-head").on('click', function (event) {
@@ -257,7 +277,7 @@ $(function () {
     $("#save-added-category").on('click', function (event) {
         var selectedCategory = $categoryList.treeview("getSelectedNodeData");
         var data;
-        if (!selectedCategory) {
+        if (selectedCategory) {
             data = {
                 categoryName: $('#add-category-name').val(),
                 parentCategoryId: selectedCategory.id,
