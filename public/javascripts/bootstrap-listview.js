@@ -9,27 +9,34 @@
     var _default = {};
     _default.options = {
         // functions
-        // onAddItem(itemData)      return: addItemDataObject or null;
+        // onAddItem(itemData)
         onAddItem: undefined,
 
-        // onDeleteItem(itemData)   return: true or false
+        // onDeleteItem(itemData)
         onDeleteItem: undefined,
 
-        // onStar(itemData)         return: true or false
+        // onStar(itemData)
         onStar: undefined,
 
-        // onFinish(itemData)       return: true or false
+        // onFinish(itemData)
         onFinish: undefined,
 
         // onDeadlineChange(itemData)
         onDeadLineChange: undefined,
+
+        // onTaskTextChange(itemData)
+        onTaskTextChange: undefined,
+
+        // onTaskDetailChange(itemData)
+        onTaskDetailChange: undefined,
+
 
         data: []
     };
 
     _default.template = {
         list: '<div class="list-wrapper"><div class="list-wrapper-scroll"><input class="add-list-item" type="text" name="name" value="" placeholder="添加新任务"><div class="todo-list-wrapper"></div><button type="button" class="btn btn-primary btn-sm toggle-finished-list">显示已完成任务</button><div class="finished-list-wrapper"></div></div></div>',
-        aside: '<div class="detail-wrapper"><div class="item-group detail-item"><input type="checkbox" class="pull-left" value=""><span class="item-text detail-item-text"></span><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div><div class="container-fluid"><div class="row"><div class="form-group"><div class="input-group date" id="datetimepicker"><input type="text" class="form-control" placeholder="请选择到期日"/><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><script type="text/javascript">$(function () {$("#datetimepicker").datetimepicker({format: "YYYY-MM-DD HH:mm:ss"});}); </script></div></div><textarea name="test" rows="10" cols="40" placeholder="备注" style="width: 100%; resize: none;"></textarea><div class="detail-footer"><span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span><div class="item-text detail-footer-text"></div><span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span></div></div>',
+        aside: '<div class="detail-wrapper"><div class="detail-scroll"><div class="item-group detail-item"><input type="checkbox" class="pull-left" value=""><div class="item-text detail-item-text" contenteditable="true"></div><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div><div class="container-fluid"><div class="row"><div class="form-group"><div class="input-group date" id="datetimepicker"><input type="text" class="form-control" placeholder="请选择到期日"/><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div></div><script type="text/javascript">$(function () {$("#datetimepicker").datetimepicker({format: "YYYY-MM-DD HH:mm:ss"});}); </script></div></div><div class="detail-text" contenteditable="true"></div><div class="detail-footer"><span class="detail-operate-hide pull-left glyphicon glyphicon-expand"></span><div class="item-text detail-footer-text"></div><span class="detail-operate-delete pull-right glyphicon glyphicon-trash"></span></div></div></div>',
         item: '<div class="item-group list-item"><input type="checkbox" class="pull-left" value=""><span class="item-text list-item-text"></span><span class="list-item-star glyphicon glyphicon-star-empty pull-right"></span></div>'
     };
 
@@ -133,7 +140,9 @@
     List.prototype.buildList = function () {
         this.$list = $(_default.template.list);
         this.$aside = $(_default.template.aside).hide();
-        this.$aside.find("#datetimepicker").find("input").blur($.proxy(this.blurHandler, this));
+        this.$aside.find("#datetimepicker").find("input").blur($.proxy(this.dateBlurHandler, this));
+        this.$aside.find(".detail-item-text").blur($.proxy(this.taskNameBlurHandler, this));
+        this.$aside.find(".detail-text").blur($.proxy(this.taskDetailBlurHandler, this));
         this.$element.append(this.$list).append(this.$aside);
         this.$todoWrapper = this.$list.find(".todo-list-wrapper");
         this.$finishWrapper = this.$list.find(".finished-list-wrapper").toggle(this.state.showFinished);
@@ -161,7 +170,8 @@
 
         if (this.state.showAside) {
             // 设置文字
-            this.$aside.find(".detail-item-text").text(this.state.selectedItemData.text);
+            this.$aside.find(".detail-item-text").html(this.state.selectedItemData.text);
+            this.$aside.find(".detail-text").html(this.state.selectedItemData.detail);
             this.$aside.find(".detail-item").attr("data-itemid", this.state.selectedItemData.dataItemId);
             if (this.state.selectedItemData.isFinish) {
                 this.$aside.find(".detail-item").addClass("list-item-finished").find(':checkbox').attr("checked", "checked");
@@ -205,7 +215,8 @@
             $target.closest(".date").attr("id") === "datetimepicker" ||
             $target.get(0).tagName === "TEXTAREA" ||
             classList.indexOf("detail-item-text") !== -1 ||
-            classList.indexOf("detail-footer-text") !== -1) {
+            classList.indexOf("detail-footer-text") !== -1 ||
+            classList.indexOf("detail-text") !== -1) {
             return true;
         }
 
@@ -299,7 +310,7 @@
      * Description: 处理aside日期改变
      * @param event
      */
-    List.prototype.blurHandler = function (event) {
+    List.prototype.dateBlurHandler = function (event) {
         var deadline = moment($("#datetimepicker").find("input").val()).format();
         if (deadline == "Invalid date") {
             this.state.selectedItemData.deadlineDate = null;
@@ -309,6 +320,25 @@
         }
 
         this.options.onDeadLineChange($.extend(true, {}, this.state.selectedItemData));
+
+    };
+
+    /**
+     * Description: 处理aside taskName 改变
+     * @param event
+     */
+    List.prototype.taskNameBlurHandler = function (event) {
+        this.state.selectedItemData.text = $(".detail-item-text").html();
+        this.options.onTaskTextChange($.extend(true, {}, this.state.selectedItemData));
+    };
+
+    /**
+     * Description: 处理aside taskDetail 改变
+     * @param event
+     */
+    List.prototype.taskDetailBlurHandler = function (event) {
+        this.state.selectedItemData.detail = $(".detail-text").html();
+        this.options.onTaskDetailChange($.extend(true, {}, this.state.selectedItemData));
     };
 
     /**
@@ -355,7 +385,7 @@
     };
 
     /**
-     * Desctiption:
+     * Desctiption: 重新从服务器获取treeview并rebuild的时候，listview应该销毁。
      */
     List.prototype.destroy = function () {
         this.unsubcribeEvents();

@@ -52,7 +52,8 @@
         return {
             getSelectedNodeData: $.proxy(this.getSelectedNodeData, this),
             clearSelect: $.proxy(this.clearSelect, this),
-            updateSelectedNodeBadge: $.proxy(this.updateSelectedNodeBadge, this)
+            updateSelectedNodeBadge: $.proxy(this.updateSelectedNodeBadge, this),
+            addNode: $.proxy(this.addNodeDataToTree, this)
         };
     };
 
@@ -124,7 +125,6 @@
 
             // if not define, set to empty object
             node.state = node.state || {};
-
 
             // 注释这种写法会出现问题，设置为false的会被改成默认的true
             // node.state.selected = node.state.selected || true;
@@ -405,10 +405,64 @@
         this.render();
     };
 
+    /**
+     * Description: 清除选中的节点
+     */
     Tree.prototype.clearSelect = function () {
         this.clearAllSelected();
         this.render();
     };
+
+    /**
+     * Description： 获取父节点node data
+     * @param {String} parentId
+     */
+    Tree.prototype.getParentNode = function (parentCategoryId) {
+        for (var i = 0, length = this.nodes.length; i < length; i++) {
+            if (this.nodes[i].id === parentCategoryId) {
+                return this.nodes[i];
+            }
+        }
+
+        return null;
+    };
+
+    /**
+     * Description: 添加节点到this.tree结构中
+     * @param {Object} node
+     */
+    Tree.prototype.addNodeDataToTree = function (node) {
+        var parentNode = null;
+        if (node.parentCategoryId) {
+            parentNode = this.getParentNode(node.parentCategoryId);
+        }
+
+        var newNode = $.extend(true, {}, node);
+        newNode.nodeId = this.nodes.length;
+        newNode.state = newNode.state || {};
+
+        if (!newNode.state.hasOwnProperty('selected')) {
+            newNode.state.selected = false;
+        }
+
+        if (!newNode.state.hasOwnProperty('expanded')) {
+            newNode.state.expanded = false;
+        }
+
+        if (!newNode.state.hasOwnProperty('disabled')) {
+            newNode.state.disabled = false;
+        }
+
+        this.nodes.push(newNode);
+
+        if (parentNode) {
+            newNode.parentId = parentNode.nodeId;
+            parentNode.nodes.push(newNode);
+        }
+
+        this.render();
+    };
+
 
     $.fn[pluginName] = function (options, args) {
 

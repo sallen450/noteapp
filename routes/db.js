@@ -310,9 +310,49 @@ function deleteTaskById(req, res, next) {
     });
 }
 
+/**
+ * Description: 修改任务deadline日期
+ * @param req
+ * @param res
+ * @param next
+ */
 function changeTaskDeadline(req, res, next) {
     var deadline = req.body.deadlineDate ? new Date(req.body.deadlineDate) : null;
     Task.update({"_id": req.body.id}, {deadlineDate: deadline}, function (err) {
+        if (err) {
+            next(err);
+        }
+
+        res.json({err: false});
+    })
+}
+
+/**
+ * Description: 修改任务名称
+ * @param req
+ * @param res
+ * @param next
+ */
+function changeTaskName(req, res, next) {
+    var taskName = req.body.taskName;
+    Task.update({"_id": req.body.id}, {taskName: taskName}, function (err) {
+        if (err) {
+            next(err);
+        }
+
+        res.json({err: false});
+    })
+}
+
+/**
+ * Description: 修改任务详细内容
+ * @param req
+ * @param res
+ * @param next
+ */
+function changeTaskDetail(req, res, next) {
+    var detail = req.body.detail;
+    Task.update({"_id": req.body.id}, {detail: detail}, function (err) {
         if (err) {
             next(err);
         }
@@ -345,5 +385,7 @@ exports.modifyTask = modifyTask;
 exports.finishTask = finishTask;
 exports.starTask = starTask;
 exports.changeTaskDeadline = changeTaskDeadline;
+exports.changeTaskName = changeTaskName;
+exports.changeTaskDetail = changeTaskDetail;
 
 exports.errorHandle = errorHandle;

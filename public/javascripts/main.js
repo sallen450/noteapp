@@ -64,6 +64,22 @@ $(function () {
     }
 
     /**
+     * Description：根据以及服务器返回的字段，生成需要的具有特定key的对象；生成一个treeview需要的节点
+     * @param {Object} element
+     */
+    function generateTreeNode(element) {
+        var obj = {};
+        obj.id = element._id;
+        obj.level = element.level;
+        obj.parentCategoryId = element.parentCategoryId;
+        obj.subIds = element.subCategoryIds;
+        obj.text = element.categoryName;
+        obj.tags = [element.unfinishCount.toString()];
+
+        return obj;
+    }
+
+    /**
      * Description； 根据获取的数据，生成tree结构的数据
      * @param data
      * @returns {Array}
@@ -76,14 +92,8 @@ $(function () {
         var treeViewDefaultData = [];
 
         data.forEach(function (element) {
-            var item = {
-                id: element._id,
-                level: element.level,
-                parentCategoryId: element.parentCategoryId,
-                subIds: element.subCategoryIds,
-                text: element.categoryName,
-                tags: [element.unfinishCount.toString()]
-            };
+            var item = generateTreeNode(element);
+
             if (element.subCategoryIds.length > 0) item.nodes = [];
 
             if (element.parentCategoryId === null) {
@@ -124,7 +134,7 @@ $(function () {
      * @param itemData
      * @param deleteIds
      */
-    function categoryItemDeleteHandler (event, itemData, deleteIds) {
+    function categoryItemDeleteHandler(event, itemData, deleteIds) {
         var data = {
             parentCategoryId: itemData.parentCategoryId,
             ids: deleteIds
@@ -160,6 +170,8 @@ $(function () {
                 onStar: taskStarHandler,
                 onFinish: taskFinishHandler,
                 onDeadLineChange: taskDeadlineHandler,
+                onTaskTextChange: taskTextChangeHandler,
+                onTaskDetailChange: taskDetailChangeHandler,
                 data: generateListData(data)
             });
         })
@@ -213,7 +225,11 @@ $(function () {
      * @param {Object} itemData
      */
     function taskDeleteHandler(itemData) {
-        $.post("/api/deletetask", {taskId: itemData._id, categoryId: itemData.categoryId, isFinish: itemData.isFinish}, function (rData) {
+        $.post("/api/deletetask", {
+            taskId: itemData._id,
+            categoryId: itemData.categoryId,
+            isFinish: itemData.isFinish
+        }, function (rData) {
             if (rData.err) {
                 showFailMessage();
                 return;
@@ -241,7 +257,11 @@ $(function () {
      * @param {Object} itemData
      */
     function taskFinishHandler(itemData) {
-        $.post("/api/finishtask", {id: itemData._id, isFinish: itemData.isFinish, categoryId: itemData.categoryId}, function (rData) {
+        $.post("/api/finishtask", {
+            id: itemData._id,
+            isFinish: itemData.isFinish,
+            categoryId: itemData.categoryId
+        }, function (rData) {
             if (rData.err) {
                 showFailMessage();
                 return;
@@ -262,6 +282,42 @@ $(function () {
                 showFailMessage();
             }
 
+        })
+    }
+
+    /**
+     * Description: update the task name to server
+     * @param {Object} itemData
+     */
+    function taskTextChangeHandler(itemData) {
+        var data = {
+            id: itemData._id,
+            taskName: itemData.text
+        };
+
+        console.log(data);
+
+        $.post("/api/taskname", data, function(rData) {
+            if (rData.err) {
+                showFailMessage("保存数据失败，请稍后重试。");
+            }
+        })
+    }
+
+    /**
+     * Description: update the task detail to server
+     * @param {Object} itemData
+     */
+    function taskDetailChangeHandler(itemData) {
+        var data = {
+            id: itemData._id,
+            detail: itemData.detail
+        };
+
+        $.post("/api/taskdetail", data, function (rData) {
+            if (rData.err) {
+                showFailMessage("保存数据失败，请稍后重试。");
+            }
         })
     }
 
@@ -294,11 +350,12 @@ $(function () {
 
         $.post('/api/addcategory', data, function (rData) {
             if (rData.err) {
-                window.location.reload();
+                showFailMessage();
                 return;
             }
 
-            renderCategoryTreeView();
+            var item = generateTreeNode(rData);
+            $categoryList.treeview("addNode", item);
 
             $('#add-category-dialog').modal('hide');
         })
