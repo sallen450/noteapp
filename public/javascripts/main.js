@@ -28,7 +28,7 @@ $(function () {
      */
     function showFailMessage(msg) {
         msg = msg || "连接服务器失败！";
-        $("#fail-alert").text(msg).slideDown("fast").delay(2000).slideUp("fast");
+        $("#fail-alert").text(msg).stop(true, true).slideDown("fast").delay(2000).slideUp("fast");
     }
 
     /**
@@ -174,6 +174,8 @@ $(function () {
                 onTaskDetailChange: taskDetailChangeHandler,
                 data: generateListData(data)
             });
+        }).fail(function () {
+            showFailMessage();
         })
     }
 
