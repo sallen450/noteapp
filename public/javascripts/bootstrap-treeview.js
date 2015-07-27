@@ -415,7 +415,8 @@
 
     /**
      * Description： 获取父节点node data
-     * @param {String} parentId
+     * @param parentCategoryId
+     * @return {Object}
      */
     Tree.prototype.getParentNode = function (parentCategoryId) {
         for (var i = 0, length = this.nodes.length; i < length; i++) {
@@ -456,8 +457,14 @@
         this.nodes.push(newNode);
 
         if (parentNode) {
+            if (parentNode.nodes === undefined) {
+                parentNode.nodes = [];
+            }
             newNode.parentId = parentNode.nodeId;
             parentNode.nodes.push(newNode);
+        }
+        else {
+            this.tree.push(newNode);
         }
 
         this.render();
@@ -486,7 +493,8 @@
             }
         });
 
-        return result || this;
+        // result可以返回null
+        return result === undefined ? this : result;
     };
 
 })(jQuery, window, document);

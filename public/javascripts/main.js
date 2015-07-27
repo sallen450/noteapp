@@ -297,8 +297,6 @@ $(function () {
             taskName: itemData.text
         };
 
-        console.log(data);
-
         $.post("/api/taskname", data, function(rData) {
             if (rData.err) {
                 showFailMessage("保存数据失败，请稍后重试。");
@@ -357,6 +355,7 @@ $(function () {
             }
 
             var item = generateTreeNode(rData);
+            console.log(item);
             $categoryList.treeview("addNode", item);
 
             $('#add-category-dialog').modal('hide');

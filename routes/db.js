@@ -22,8 +22,9 @@ var taskSchema = {
 };
 
 function generateCategoryDocument(categoryName, parentLevel, parentCaregoryId) {
+    console.log(parentLevel);
     var parentId = null;
-    var level = Number(parentLevel) + 1;
+    var level = Number(parentLevel || -1) + 1;
 
     if (parentCaregoryId) {
         parentId = new mongoose.Types.ObjectId(parentCaregoryId);
